@@ -1,19 +1,39 @@
 -- Set up the game window & collect libraries
 
-love.window.setMode(350,500)
 love.window.setTitle("Educational Game")
 Gamestate = require "Libraries.hump.gamestate"
 
 local menu = {}
 local game = {}
+local map2 = {
+}
+
+--[[ 'window' variable used to change the size of the
+window depending on which main menu button is clicked --]]
+
+local window = "changeWindow"
 
 -- Set various settings to default values
 
 function love.load()
+    -- Setup the main menu window, collect fonts & create the map variable for the maze --
     Gamestate.registerEvents()
+    love.window.setMode(350,500)
     Gamestate.switch(menu)
     font1 = love.graphics.newFont("fonts/Amatic-Bold.ttf", 50)
     font2 = love.graphics.newFont("fonts/AmaticSC-Regular.ttf", 36)
+
+    map = {
+        
+    }
+
+    --[[ Create a template for the maze to be made on (a full grid) ]]--
+    for i=0, 17, 1 do
+        table.insert(map, {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1 ,1})
+    end
+
+    math.randomseed(os.time())
+
 end
 
 -- Draw the main menu graphics --
@@ -51,9 +71,36 @@ function menu:mousepressed(x, y, button, istouch)
     end
 end
 
+-- Setup the window for the game --
+
+function changeWindowSize()
+    love.window.setMode(640,640)
+    generateMaze()
+    window = "windowChanged"
+end
+
+-- Generate the maze --
+
+function generateMaze()
+    local stack = {}
+    table.insert(stack, {math.random(2,17), 1})
+    map[stack[1][1]][1] = 0
+end
+
 -- Draw the game graphics --
 
 function game:draw()
+    if window == "changeWindow" then
+        changeWindowSize()
+    end
+    
+    for y=1, #map do
+        for x=1, #map[y] do
+            if map[y][x] == 1 then
+                love.graphics.rectangle("fill", x * 32, y * 32, 32, 32)
+            end
+        end
+    end
 
 end
 
